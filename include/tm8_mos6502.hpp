@@ -8,7 +8,7 @@
 
 namespace tm8{
 
-    class SR
+    class sr
     {
     public:
         bool N;
@@ -17,9 +17,9 @@ namespace tm8{
         bool I;
         bool Z;
         bool C;
-        uint8_t sr;
+        uint8_t SR;
 
-        SR()
+        sr()
         {
             N = false;
             V = false;
@@ -27,7 +27,7 @@ namespace tm8{
             I = true;
             Z = false;
             C = false;
-            sr = 0;
+            SR = 0;
         }
     };
 
@@ -39,9 +39,10 @@ namespace tm8{
         
         uint8_t SP;
         uint16_t PC;
-        SR SR;
+        sr SR;
         uint16_t adress_width; //13 by Atari, 16 by everyone else
         std::vector<uint8_t>& bus;
+        uint16_t trigger;
 
         mos6502(const uint8_t adress_width, std::vector<uint8_t>& bus){
             this->bus = bus;
@@ -51,6 +52,8 @@ namespace tm8{
                 this->adress_width <<= 1;
                 this->adress_width += 1;
             }
+
+            trigger = 0x0000;
         }
 
         uint16_t createadress(const uint8_t lb, const uint8_t hb, const uint8_t offset){ //creates a 16 bit adress                                                                              //out of 2 8 bit components
@@ -62,6 +65,15 @@ namespace tm8{
         adress = (adress & adress_width);
 
         return adress;
+        }
+
+        uint8_t setflags(const uint16_t obj){
+            if(obj > 255) SR.C = true ;
+            else SR.C = false;
+            if(obj == 0) SR.Z = true;
+            else SR.Z = false;
+
+            return static_cast<uint8_t> (obj);
         }
     
     };//End of class
