@@ -5,6 +5,11 @@
 #include <array>
 #include <iostream>
 #include <vector>
+#include <cmath>
+
+#define INST    bus[PC]
+#define PARAM1  bus[PC+1]
+#define PARAM2  bus[PC+2]
 
 namespace tm8{
 
@@ -13,6 +18,8 @@ namespace tm8{
     public:
         bool N;
         bool V;
+        bool i;
+        bool B;
         bool D;
         bool I;
         bool Z;
@@ -42,21 +49,21 @@ namespace tm8{
         sr SR;
         uint16_t adress_width; //13 by Atari, 16 by everyone else
         std::vector<uint8_t>& bus;
-        uint16_t trigger;
+        uint16_t& trigger;
 
-        mos6502(const uint8_t adress_width, std::vector<uint8_t>& bus){
-            this->bus = bus;
+        mos6502(const uint8_t adress_width_in, std::vector<uint8_t>& bus_in, uint16_t& trigger_in, const uint16_t reset_vector) : bus(bus_in), trigger(trigger_in) {
 
-            this->adress_width = 1;
-            for(int i = 0; i < adress_width-1; i++){
-                this->adress_width <<= 1;
-                this->adress_width += 1;
-            }
+            adress_width = pow(2.0, (long double)adress_width_in);
 
-            trigger = 0x0000;
+            trigger = 0xFFFF;
+
+            PC = reset_vector;
+            A = 0;
+            X = 0;
+            Y = 0;
         }
 
-        uint16_t createadress(const uint8_t lb, const uint8_t hb, const uint8_t offset){ //creates a 16 bit adress                                                                              //out of 2 8 bit components
+        uint16_t createadress(const uint8_t lb, const uint8_t hb, const uint8_t offset){ 
         uint16_t adress = hb;
         adress <<= 8;
         adress += lb;
