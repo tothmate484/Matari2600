@@ -74,8 +74,23 @@ namespace tm8{
             else SR.C = false;
             if(obj == 0) SR.Z = true;
             else SR.Z = false;
+            if(obj >=128) SR.N = true;
+            else SR.N = false;
 
             return static_cast<uint8_t> (obj);
+        }
+
+        void push(uint8_t data){
+            bus[SP] = data;
+            SP--;
+
+            return;
+        }
+
+        uint8_t pop(void){
+            SP++;
+            
+            return bus[SP];
         }
 
         //beginning of ALU function definitions
