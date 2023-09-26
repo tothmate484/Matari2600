@@ -42,42 +42,42 @@ void tm8::mos6502::CLD(void){
     return;
 }
 
-void tm8::mos6502::LDA(uint8_t value){
+void tm8::mos6502::LDA(const uint8_t value){
     A = value;
     setflags(A);
 
     return;
 }
 
-void tm8::mos6502::STA(uint16_t address){
+void tm8::mos6502::STA(const uint16_t address){
     bus[address] = A;
     trigger = address;
     
     return;
 }
 
-void tm8::mos6502::LDX(uint8_t value){
+void tm8::mos6502::LDX(const uint8_t value){
     X = value;
     setflags(X);
 
     return;
 }
 
-void tm8::mos6502::STX(uint16_t address){
+void tm8::mos6502::STX(const uint16_t address){
     bus[address] = X;
     trigger = address;
     
     return;
 }
 
-void tm8::mos6502::LDY(uint8_t value){
+void tm8::mos6502::LDY(const uint8_t value){
     Y = value;
     setflags(Y);
 
     return;
 }
 
-void tm8::mos6502::STY(uint16_t address){
+void tm8::mos6502::STY(const uint16_t address){
     bus[address] = Y;
     trigger = address;
     
@@ -137,4 +137,62 @@ void tm8::mos6502::PLA(void){
     
     return;
 }
+
+void tm8::mos6502::PHP(void){
+    SR[i] = 1;
+    SR[B] = 1;
+    push((uint8_t) SR.to_ulong());
+    
+    return;
+}
+
+void tm8::mos6502::PLP(void){
+    SR = pop();
+    
+    return;
+}
+
+void tm8::mos6502::INX(void){
+    X++;
+    setflags(X);
+    
+    return;
+}
+
+void tm8::mos6502::INY(void){
+    Y++;
+    setflags(Y);
+    
+    return;
+}
+
+void tm8::mos6502::DEY(void){
+    Y--;
+    setflags(Y);
+    
+    return;
+}
+
+void tm8::mos6502::DEX(void){
+    X--;
+    setflags(X);
+    
+    return;
+}
+
+void tm8::mos6502::INC(const uint16_t address){
+    bus[address]++;
+    setflags(bus[address]);
+
+    return;
+}
+
+void tm8::mos6502::DEC(const uint16_t address){
+    bus[address]--;
+    setflags(bus[address]);
+
+    return;
+}
+
+
 
