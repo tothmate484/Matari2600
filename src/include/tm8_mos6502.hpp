@@ -5,33 +5,9 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <bitset>
 
 namespace tm8{
-
-    class sr
-    {
-    public:
-        bool N;
-        bool V;
-        bool i;
-        bool B;
-        bool D;
-        bool I;
-        bool Z;
-        bool C;
-        uint8_t SR;
-
-        sr()
-        {
-            N = false;
-            V = false;
-            D = false;
-            I = true;
-            Z = false;
-            C = false;
-            SR = 0;
-        }
-    };
 
     class mos6502{ //beginning of class
     private:
@@ -41,7 +17,12 @@ namespace tm8{
         
         uint8_t SP;
         uint16_t PC;
-        sr SR;
+
+        enum flags{
+            C, Z, I, D, B, i, V, N
+        };
+
+        std::bitset<8> SR;
         uint16_t adress_width; //13 by Atari, 16 by everyone else
         std::vector<uint8_t>& bus;
         uint16_t& trigger;
@@ -70,12 +51,12 @@ namespace tm8{
         }
 
         uint8_t setflags(const uint16_t obj){
-            if(obj > 255) SR.C = true ;
-            else SR.C = false;
-            if(obj == 0) SR.Z = true;
-            else SR.Z = false;
-            if(obj >=128) SR.N = true;
-            else SR.N = false;
+            if(obj > 255) SR[C] = 1 ;
+            else SR[C] = 0;
+            if(obj == 0) SR[Z] = 1;
+            else SR[Z] = 0;
+            if(obj >=128) SR[N] = 1;
+            else SR[N] = 0;
 
             return static_cast<uint8_t> (obj);
         }
