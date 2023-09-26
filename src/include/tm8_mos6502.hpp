@@ -84,12 +84,12 @@ namespace tm8{
         void SED(void);
         void CLD(void);
 
-        void LDA(uint8_t value);
-        void STA(uint16_t address);
-        void LDX(uint8_t value);
-        void STX(uint16_t address);
-        void LDY(uint8_t value);
-        void STY(uint16_t address);
+        void LDA(const uint8_t value);
+        void STA(const uint16_t address);
+        void LDX(const uint8_t value);
+        void STX(const uint16_t address);
+        void LDY(const uint8_t value);
+        void STY(const uint16_t address);
         void TAX(void);
         void TXA(void);
         void TAY(void);
@@ -106,42 +106,42 @@ namespace tm8{
         void DEX(void);
         void INY(void);
         void DEY(void);
-        void INC(uint16_t address);
-        void DEC(uint16_t address);
+        void INC(const uint16_t address);
+        void DEC(const uint16_t address);
 
-        void ADC(uint8_t value);
-        void SBC(uint8_t value);
+        void ADC(const uint8_t value);
+        void SBC(const uint8_t value);
 
-        void AND(uint8_t value);
-        void OR(uint8_t value);
-        void EOR(uint8_t value);
+        void AND(const uint8_t value);
+        void OR(const uint8_t value);
+        void EOR(const uint8_t value);
 
         void ASL(void);
         void RSR(void);
         void ROL(void);
         void ROR(void);
 
-        void CMP(uint8_t value);
-        void CPX(uint8_t value);
-        void CPY(uint8_t value);
+        void CMP(const uint8_t value);
+        void CPX(const uint8_t value);
+        void CPY(const uint8_t value);
 
-        void BCC(uint8_t value);
-        void BCS(uint8_t value);
-        void BEQ(uint8_t value);
-        void BNE(uint8_t value);
-        void BMI(uint8_t value);
-        void BPL(uint8_t value);
-        void BVC(uint8_t value);
-        void BVS(uint8_t value);
+        void BCC(const uint8_t value);
+        void BCS(const uint8_t value);
+        void BEQ(const uint8_t value);
+        void BNE(const uint8_t value);
+        void BMI(const uint8_t value);
+        void BPL(const uint8_t value);
+        void BVC(const uint8_t value);
+        void BVS(const uint8_t value);
 
-        void JMP(uint16_t address);
-        void JSR(uint16_t address);
+        void JMP(const uint16_t address);
+        void JSR(const uint16_t address);
         void RTS(void);
 
         void BRK(void);
         void RTI(void);
 
-        void BIT(uint8_t value);
+        void BIT(const uint8_t value);
         void NOP(void);
 
         //end of ALU function definitions
