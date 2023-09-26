@@ -1,43 +1,43 @@
 #include "include/tm8_mos6502.hpp"
 
 void tm8::mos6502::SEI(void){
-    SR.I = true;
+    SR[I] = 1;
 
     return;
 }
 
 void tm8::mos6502::CLI(void){
-    SR.I = false;
+    SR[I] = 0;
 
     return;
 }
 
 void tm8::mos6502::CLC(void){
-    SR.C = false;
+    SR[C] = 0;
 
     return;
 }
 
 void tm8::mos6502::SEC(void){
-    SR.C = true;
+    SR[C] = 1;
 
     return;
 }
 
 void tm8::mos6502::CLV(void){
-    SR.V = false;
+    SR[V] = 0;
 
     return;
 }
 
 void tm8::mos6502::SED(void){
-    SR.D = true;
+    SR[D] = 1;
 
     return;
 }
 
 void tm8::mos6502::CLD(void){
-    SR.D = true;
+    SR[D] = 0;
 
     return;
 }
