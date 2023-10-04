@@ -194,5 +194,29 @@ void tm8::mos6502::DEC(const uint16_t address){
     return;
 }
 
+void tm8::mos6502::ADC(const uint8_t value){
+    uint16_t sum = A + value + (uint16_t)SR[C];
+    bool msb1 = A & 128;                        //The signed overflow flag (V) depends on the most significant bits
+    bool msb2 = value & 128;
+    bool msb3 = sum + 128;
+
+    A = setflags(sum);
+    SR[V] = (msb1 && msb2 && !msb3);
+
+    return;
+}
+
+void tm8::mos6502::SBC(const uint8_t value){
+    uint16_t sum = A - value - (uint16_t)!(bool)SR[C];
+    bool msb1 = A & 128;
+    bool msb2 = value & 128;
+    bool msb3 = sum + 128;
+
+    A = setflags(sum);
+    SR[V] = (msb1 && msb2 && !msb3);
+
+    return;
+}
+
 
 
