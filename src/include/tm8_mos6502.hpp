@@ -116,10 +116,10 @@ namespace tm8{
         void OR(const uint8_t value);
         void EOR(const uint8_t value);
 
-        void ASL(void);
-        void RSR(void);
-        void ROL(void);
-        void ROR(void);
+        void ASL(uint8_t& value);
+        void LSR(uint8_t& value);
+        void ROL(uint8_t& value);
+        void ROR(uint8_t& value);
 
         void CMP(const uint8_t value);
         void CPX(const uint8_t value);
