@@ -218,5 +218,181 @@ void tm8::mos6502::SBC(const uint8_t value){
     return;
 }
 
+void tm8::mos6502::AND(const uint8_t value){
+    A = A & value;
 
+    setflags(A);
+    return;
+}
 
+void tm8::mos6502::OR(const uint8_t value){
+    A = A | value;
+
+    setflags(A);
+    return;
+}
+
+void tm8::mos6502::EOR(const uint8_t value){
+    A = A^value;
+
+    setflags(A);
+    return;
+}
+
+void tm8::mos6502::ASL(uint8_t & value){
+    uint16_t outcome = value;
+    outcome <<= 1;
+
+    value = setflags(A);
+    return;
+}
+
+void tm8::mos6502::LSR(uint8_t & value){
+    SR[C] = (bool)(value & 1);
+
+    value >>= 1;
+
+    SR[N] = 0;
+    SR[Z] = (value == 0);
+
+    return;
+}
+
+void tm8::mos6502::ROL(uint8_t& value){
+    bool carry = (bool)(value & 128);
+    value <<= 1;
+    value += (uint8_t)carry;
+
+    setflags(value);
+    SR[C] = carry;
+
+    return; 
+}
+        
+void tm8::mos6502::ROR(uint8_t& value){
+    bool carry = (bool)(value & 1);
+    value >>= 1;
+    value += 128*(uint8_t)carry;
+
+    setflags(value);
+    SR[C] = carry;
+
+    return; 
+}
+
+void tm8::mos6502::CMP(const uint8_t value){
+    uint8_t difference = A - value;
+
+    if(A < value){
+        SR[Z] = 0;
+        SR[C] = 0;
+        SR[N] = (bool)(difference && 128);
+    }
+    else if(A == value){
+        SR[Z] = 1;
+        SR[C] = 1;
+        SR[N] = 0;
+    }
+    else if(A > value){
+        SR[Z] = 0;
+        SR[C] = 1;
+        SR[N] = (bool)(difference && 128);
+    }
+
+    return;
+}
+
+void tm8::mos6502::CPX(const uint8_t value){
+    uint8_t difference = X - value;
+
+    if(X < value){
+        SR[Z] = 0;
+        SR[C] = 0;
+        SR[N] = (bool)(difference && 128);
+    }
+    else if(X == value){
+        SR[Z] = 1;
+        SR[C] = 1;
+        SR[N] = 0;
+    }
+    else if(X > value){
+        SR[Z] = 0;
+        SR[C] = 1;
+        SR[N] = (bool)(difference && 128);
+    }
+
+    return;
+}
+void tm8::mos6502::CPY(const uint8_t value){
+    uint8_t difference = Y - value;
+
+    if(Y < value){
+        SR[Z] = 0;
+        SR[C] = 0;
+        SR[N] = (bool)(difference && 128);
+    }
+    else if(Y == value){
+        SR[Z] = 1;
+        SR[C] = 1;
+        SR[N] = 0;
+    }
+    else if(Y > value){
+        SR[Z] = 0;
+        SR[C] = 1;
+        SR[N] = (bool)(difference && 128);
+    }
+
+    return;
+}
+
+void tm8::mos6502::BCC(const uint8_t value){
+    if(!SR[C]){
+        PC += (int8_t)value;
+    }
+}
+
+void tm8::mos6502::BCS(const uint8_t value){
+    if(SR[C]){
+        PC += (int8_t)value;
+    }
+}
+
+void tm8::mos6502::BEQ(const uint8_t value){
+    if(SR[Z]){
+        PC += (int8_t)value;
+    }
+}
+
+void tm8::mos6502::BNE(const uint8_t value){
+    if(!SR[Z]){
+        PC += (int8_t)value;
+    }
+}
+
+void tm8::mos6502::BMI(const uint8_t value){
+    if(SR[N]){
+        PC += (int8_t)value;
+    }
+}
+
+void tm8::mos6502::BPL(const uint8_t value){
+    if(!SR[N]){
+        PC += (int8_t)value;
+    }
+}
+
+void tm8::mos6502::BVC(const uint8_t value){
+    if(!SR[V]){
+        PC += (int8_t)value;
+    }
+}
+
+void tm8::mos6502::BVS(const uint8_t value){
+    if(SR[V]){
+        PC += (int8_t)value;
+    }
+}
+
+void tm8::mos6502::JMP(const uint16_t address){
+    PC = address;
+}
