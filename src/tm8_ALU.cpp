@@ -404,7 +404,7 @@ void tm8::mos6502::JSR(const uint16_t address){
     topush >>= 8; //pushes the high byte in place of the low btye, so casting to 8 bits will return it
     push((uint8_t)topush); //pushes the original hifh byte into the stack
 
-    PC = createadress(bus[PC_old + 1] , bus[PC_old + 2], 0); //modifies the PC to the absolute address of the subroutine
+    PC = createaddress(bus[PC_old + 1] , bus[PC_old + 2], 0); //modifies the PC to the absolute address of the subroutine
 
     return;
 }
@@ -413,7 +413,7 @@ void tm8::mos6502::RTS(void){
     uint8_t hb = pop();
     uint8_t lb = pop();
 
-    PC = createadress(lb, hb, 0);
+    PC = createaddress(lb, hb, 0);
 
     return;
 }
