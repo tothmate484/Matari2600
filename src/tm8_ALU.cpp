@@ -286,7 +286,7 @@ void tm8::mos6502::CMP(const uint8_t value){
     if(A < value){
         SR[Z] = 0;
         SR[C] = 0;
-        SR[N] = (bool)(difference && 128);
+        SR[N] = (bool)(difference & 128);
     }
     else if(A == value){
         SR[Z] = 1;
@@ -296,7 +296,7 @@ void tm8::mos6502::CMP(const uint8_t value){
     else if(A > value){
         SR[Z] = 0;
         SR[C] = 1;
-        SR[N] = (bool)(difference && 128);
+        SR[N] = (bool)(difference & 128);
     }
 
     return;
@@ -308,7 +308,7 @@ void tm8::mos6502::CPX(const uint8_t value){
     if(X < value){
         SR[Z] = 0;
         SR[C] = 0;
-        SR[N] = (bool)(difference && 128);
+        SR[N] = (bool)(difference & 128);
     }
     else if(X == value){
         SR[Z] = 1;
@@ -318,7 +318,7 @@ void tm8::mos6502::CPX(const uint8_t value){
     else if(X > value){
         SR[Z] = 0;
         SR[C] = 1;
-        SR[N] = (bool)(difference && 128);
+        SR[N] = (bool)(difference & 128);
     }
 
     return;
@@ -329,7 +329,7 @@ void tm8::mos6502::CPY(const uint8_t value){
     if(Y < value){
         SR[Z] = 0;
         SR[C] = 0;
-        SR[N] = (bool)(difference && 128);
+        SR[N] = (bool)(difference & 128);
     }
     else if(Y == value){
         SR[Z] = 1;
@@ -339,7 +339,7 @@ void tm8::mos6502::CPY(const uint8_t value){
     else if(Y > value){
         SR[Z] = 0;
         SR[C] = 1;
-        SR[N] = (bool)(difference && 128);
+        SR[N] = (bool)(difference & 128);
     }
 
     return;
@@ -395,4 +395,45 @@ void tm8::mos6502::BVS(const uint8_t value){
 
 void tm8::mos6502::JMP(const uint16_t address){
     PC = address;
+}
+
+void tm8::mos6502::JSR(const uint16_t address){
+    uint16_t PC_old = PC - 2; //the instruction decode will automatically increase the PC by 2, as every absolute instruction uses 2 bytes, but I need the address of the instruction itself 
+    uint16_t topush = PC_old; //I will fracture the 16 bit address into 2 8 bit parts, I need to cpoy the original one not to destroy it
+    push((uint8_t)topush); //pushes low byte of the address into the stack
+    topush >>= 8; //pushes the high byte in place of the low btye, so casting to 8 bits will return it
+    push((uint8_t)topush); //pushes the original hifh byte into the stack
+
+    PC = createadress(bus[PC_old + 1] , bus[PC_old + 2], 0); //modifies the PC to the absolute address of the subroutine
+
+    return;
+}
+
+void tm8::mos6502::RTS(void){
+    uint8_t hb = pop();
+    uint8_t lb = pop();
+
+    PC = createadress(lb, hb, 0);
+
+    return;
+}
+
+void tm8::mos6502::BRK(void){
+    return; //irrelevant for the working of the program, may be intplemented in the future
+}
+
+void tm8::mos6502::RTI(void){
+    return; //same as BRK
+}
+
+void tm8::mos6502::BIT(const uint8_t value){
+    SR[N] = (value & 128); //0b10000000 = bit 7
+    SR[V] = (value & 64); //0b01000000 = bit 6
+    SR[Z] = !(value & A);
+
+    return;
+}
+
+void tm8::mos6502::NOP(void){
+    return; //just a syntax placeholder
 }
