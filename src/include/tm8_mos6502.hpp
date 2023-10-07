@@ -158,6 +158,22 @@ namespace tm8{
         void fetch();
         void decode();
         void execute();
+
+            //addressing modes
+
+        void impl(); //no need for operand
+        void imm(); //const value
+        void abs(); //memory address given after instruction
+        void abs_X(); //X-indexed abs
+        void abs_Y(); //Y-indexed abs
+        void zpg(); //abs, but only 8 bit address
+        void zpg_X(); //X-indexed zpg
+        void zpg_Y(); //Y-indexed zpg
+        void ind(); //data on an address given by the address after the instruction
+        void Acc(); //target: accumulator
+        void X_ind(); //pre-X-indexed indirect
+        void Y_ind(); //pre-Y-indexed indirect
+        void rel(); //relative for conditional jumps
     
     }; //End of class
 }
