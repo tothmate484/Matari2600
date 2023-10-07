@@ -23,15 +23,23 @@ namespace tm8{
         };
 
         std::bitset<8> SR;
-        uint16_t adress_width; //13 by Atari, 16 by everyone else
+        uint16_t address_width; //13 by Atari, 16 by everyone else
         std::vector<uint8_t>& bus;
-        uint16_t& trigger;
+        uint16_t& address_bus;
+        uint8_t cycles;
+        uint8_t instruction;
+        uint8_t operand1;
+        uint8_t operand2;
+        uint8_t inst_a;
+        uint8_t inst_b;
+        uint8_t inst_c;
 
-        mos6502(const uint8_t adress_width_in, std::vector<uint8_t>& bus_in, uint16_t& trigger_in, const uint16_t reset_vector) : bus(bus_in), trigger(trigger_in) {
+        mos6502(const uint8_t address_width_in, std::vector<uint8_t>& bus_in, uint16_t& trigger_in, const uint16_t reset_vector) : bus(bus_in), address_bus(trigger_in) {
 
-            adress_width = pow(2.0, (long double)adress_width_in);
+            address_width = pow(2.0, (long double)address_width_in);
 
-            trigger = 0xFFFF;
+            address_bus = 0xFFFF;
+            cycles = 0;
 
             PC = reset_vector;
             A = 0;
@@ -39,15 +47,15 @@ namespace tm8{
             Y = 0;
         }
 
-        uint16_t createadress(const uint8_t lb, const uint8_t hb, const uint8_t offset){ 
-        uint16_t adress = hb;
-        adress <<= 8;
-        adress += lb;
-        adress += offset;
+        uint16_t createaddress(const uint8_t& lb, const uint8_t& hb, const uint8_t& offset){ 
+        uint16_t address = hb;
+        address <<= 8;
+        address += lb;
+        address += offset;
 
-        adress = (adress & adress_width);
+        address = (address & address_width);
 
-        return adress;
+        return address;
         }
 
         uint8_t setflags(const uint16_t obj){
@@ -145,6 +153,11 @@ namespace tm8{
         void NOP(void);
 
         //end of ALU function definitions
+        //beginning of CU function definitions
+
+        void fetch();
+        void decode();
+        void execute();
     
     }; //End of class
 }
