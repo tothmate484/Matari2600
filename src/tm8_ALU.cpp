@@ -51,7 +51,7 @@ void tm8::mos6502::LDA(const uint8_t value){
 
 void tm8::mos6502::STA(const uint16_t address){
     bus[address] = A;
-    trigger = address;
+    address_bus = address;
     
     return;
 }
@@ -65,7 +65,7 @@ void tm8::mos6502::LDX(const uint8_t value){
 
 void tm8::mos6502::STX(const uint16_t address){
     bus[address] = X;
-    trigger = address;
+    address_bus = address;
     
     return;
 }
@@ -79,7 +79,7 @@ void tm8::mos6502::LDY(const uint8_t value){
 
 void tm8::mos6502::STY(const uint16_t address){
     bus[address] = Y;
-    trigger = address;
+    address_bus = address;
     
     return;
 }
@@ -399,7 +399,7 @@ void tm8::mos6502::JMP(const uint16_t address){
 
 void tm8::mos6502::JSR(const uint16_t address){
     uint16_t PC_old = PC - 2; //the instruction decode will automatically increase the PC by 2, as every absolute instruction uses 2 bytes, but I need the address of the instruction itself 
-    uint16_t topush = PC_old; //I will fracture the 16 bit address into 2 8 bit parts, I need to cpoy the original one not to destroy it
+    uint16_t topush = PC; //I will fracture the 16 bit address into 2 8 bit parts, I need to cpoy the original one not to destroy it
     push((uint8_t)topush); //pushes low byte of the address into the stack
     topush >>= 8; //pushes the high byte in place of the low btye, so casting to 8 bits will return it
     push((uint8_t)topush); //pushes the original hifh byte into the stack
