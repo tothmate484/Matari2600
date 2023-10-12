@@ -398,7 +398,7 @@ void tm8::mos6502::JMP(const uint16_t address){
 }
 
 void tm8::mos6502::JSR(const uint16_t address){
-    uint16_t PC_old = PC - 2; //the instruction decode will automatically increase the PC by 2, as every absolute instruction uses 2 bytes, but I need the address of the instruction itself 
+    uint16_t PC_old = PC - 3; //the instruction decode will automatically increase the PC by 3, as every absolute instruction uses 3 bytes, but I need the address of the instruction itself 
     uint16_t topush = PC; //I will fracture the 16 bit address into 2 8 bit parts, I need to cpoy the original one not to destroy it
     push((uint8_t)topush); //pushes low byte of the address into the stack
     topush >>= 8; //pushes the high byte in place of the low btye, so casting to 8 bits will return it
