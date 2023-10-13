@@ -6,6 +6,7 @@
 #include <vector>
 #include <cmath>
 #include <bitset>
+#include <array>
 
 namespace tm8{
 
@@ -80,6 +81,12 @@ namespace tm8{
             SP++;
             
             return bus[SP];
+        }
+
+        bool extractbit(const uint8_t& obj, const uint8_t bit){
+            const std::array<uint8_t, 8> table = {1,2,4,8,16,32,64,128};
+
+            return static_cast<bool> (obj & table[bit]);
         }
 
         //beginning of ALU function definitions
