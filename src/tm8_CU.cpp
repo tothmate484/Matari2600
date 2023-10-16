@@ -21,3 +21,73 @@ void tm8::mos6502::fetch(){
 void tm8::mos6502::decode(){
 
 }
+
+void tm8::mos6502::execute(){
+
+}
+
+//addressing mode definitions
+
+void tm8::mos6502::impl(){
+    address_bus = 0xFFFF;
+    PC++;
+
+    return; 
+}
+
+void tm8::mos6502::imm(){
+    address_bus = static_cast<uint16_t>(PC+1);
+    PC += 2;
+
+    return;
+}
+void tm8::mos6502::abs(){
+    address_bus = createaddress(PC+1, PC+2, 0);
+    PC += 3;
+
+    return;
+}
+void tm8::mos6502::abs_X(){
+    address_bus = createaddress(PC+1, PC+2, X);
+    PC += 2;
+
+    return;
+}
+
+void tm8::mos6502::abs_Y(){
+    address_bus = createaddress(PC+1, PC+2, Y);
+    PC += 2;
+
+    return;
+}
+
+void tm8::mos6502::zpg(){
+    address_bus = static_cast<uint8_t>(createaddress(PC+1, 0, 0));
+    PC++;
+
+    return;
+}
+
+void tm8::mos6502::zpg_X(){
+    address_bus = static_cast<uint8_t>(createaddress(PC+1, 0, X)); //if it's bigger than 255 it has to be cut down to 8 bits 
+    PC++;
+
+    return;
+}
+
+void tm8::mos6502::zpg_Y(){
+    address_bus = static_cast<uint8_t>(createaddress(PC+1, 0, Y));
+    PC++;
+
+    return;
+}
+
+void tm8::mos6502::ind(){
+    uint16_t preaddress = createaddress(PC+1, PC+2, 0);
+    
+}
+
+void Acc(); //target: accumulator
+void X_ind(); //pre-X-indexed indirect
+void Y_ind(); //pre-Y-indexed indirect
+void rel(); //relative for conditional jumps
