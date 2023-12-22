@@ -51,7 +51,7 @@ void tm8::mos6502::LDA(const uint8_t value){
 
 void tm8::mos6502::STA(const uint16_t address){
     bus[address] = A;
-    trigger = address;
+    address_bus = address;
     
     return;
 }
@@ -65,7 +65,7 @@ void tm8::mos6502::LDX(const uint8_t value){
 
 void tm8::mos6502::STX(const uint16_t address){
     bus[address] = X;
-    trigger = address;
+    address_bus = address;
     
     return;
 }
@@ -79,7 +79,7 @@ void tm8::mos6502::LDY(const uint8_t value){
 
 void tm8::mos6502::STY(const uint16_t address){
     bus[address] = Y;
-    trigger = address;
+    address_bus = address;
     
     return;
 }
@@ -141,7 +141,7 @@ void tm8::mos6502::PLA(void){
 void tm8::mos6502::PHP(void){
     SR[i] = 1;
     SR[B] = 1;
-    push((uint8_t) SR.to_ulong());
+    push(static_cast<uint8_t> (SR.to_ulong()));
     
     return;
 }
@@ -195,10 +195,10 @@ void tm8::mos6502::DEC(const uint16_t address){
 }
 
 void tm8::mos6502::ADC(const uint8_t value){
-    uint16_t sum = A + value + (uint16_t)SR[C];
-    bool msb1 = A & 128;                        //The signed overflow flag (V) depends on the most significant bits
-    bool msb2 = value & 128;
-    bool msb3 = sum + 128;
+    uint16_t sum = A + value + static_cast<uint16_t>(SR[C]);
+    bool msb1 = extractbit(A, 7);       //The signed overflow flag (V) depends on the most significant bits
+    bool msb2 = extractbit(value, 7);
+    bool msb3 = extractbit(static_cast<uint8_t>(sum), 7);
 
     A = setflags(sum);
     SR[V] = (msb1 && msb2 && !msb3);
@@ -207,10 +207,10 @@ void tm8::mos6502::ADC(const uint8_t value){
 }
 
 void tm8::mos6502::SBC(const uint8_t value){
-    uint16_t sum = A - value - (uint16_t)!(bool)SR[C];
-    bool msb1 = A & 128;
-    bool msb2 = value & 128;
-    bool msb3 = sum + 128;
+    uint16_t sum = A - value - static_cast<uint16_t>(!static_cast<bool>(SR[C]));
+    bool msb1 = extractbit(A, 7);
+    bool msb2 = extractbit(value, 7);
+    bool msb3 = extractbit(static_cast<uint8_t>(sum), 7);
 
     A = setflags(sum);
     SR[V] = (msb1 && msb2 && !msb3);
@@ -248,7 +248,7 @@ void tm8::mos6502::ASL(uint8_t & value){
 }
 
 void tm8::mos6502::LSR(uint8_t & value){
-    SR[C] = (bool)(value & 1);
+    SR[C] = extractbit(value, 0);
 
     value >>= 1;
 
@@ -259,9 +259,9 @@ void tm8::mos6502::LSR(uint8_t & value){
 }
 
 void tm8::mos6502::ROL(uint8_t& value){
-    bool carry = (bool)(value & 128);
+    bool carry = extractbit(value, 7);
     value <<= 1;
-    value += (uint8_t)carry;
+    value += static_cast<uint8_t>(carry);
 
     setflags(value);
     SR[C] = carry;
@@ -270,9 +270,9 @@ void tm8::mos6502::ROL(uint8_t& value){
 }
         
 void tm8::mos6502::ROR(uint8_t& value){
-    bool carry = (bool)(value & 1);
+    bool carry = extractbit(value, 0);
     value >>= 1;
-    value += 128*(uint8_t)carry;
+    value += 128*static_cast<uint8_t>(carry);
 
     setflags(value);
     SR[C] = carry;
@@ -286,7 +286,7 @@ void tm8::mos6502::CMP(const uint8_t value){
     if(A < value){
         SR[Z] = 0;
         SR[C] = 0;
-        SR[N] = (bool)(difference & 128);
+        SR[N] = extractbit(difference, 7);
     }
     else if(A == value){
         SR[Z] = 1;
@@ -296,7 +296,7 @@ void tm8::mos6502::CMP(const uint8_t value){
     else if(A > value){
         SR[Z] = 0;
         SR[C] = 1;
-        SR[N] = (bool)(difference & 128);
+        SR[N] = extractbit(difference, 7);
     }
 
     return;
@@ -308,7 +308,7 @@ void tm8::mos6502::CPX(const uint8_t value){
     if(X < value){
         SR[Z] = 0;
         SR[C] = 0;
-        SR[N] = (bool)(difference & 128);
+        SR[N] = extractbit(difference, 7);
     }
     else if(X == value){
         SR[Z] = 1;
@@ -318,7 +318,7 @@ void tm8::mos6502::CPX(const uint8_t value){
     else if(X > value){
         SR[Z] = 0;
         SR[C] = 1;
-        SR[N] = (bool)(difference & 128);
+        SR[N] = extractbit(difference, 7);
     }
 
     return;
@@ -329,7 +329,7 @@ void tm8::mos6502::CPY(const uint8_t value){
     if(Y < value){
         SR[Z] = 0;
         SR[C] = 0;
-        SR[N] = (bool)(difference & 128);
+        SR[N] = extractbit(difference, 7);
     }
     else if(Y == value){
         SR[Z] = 1;
@@ -339,7 +339,7 @@ void tm8::mos6502::CPY(const uint8_t value){
     else if(Y > value){
         SR[Z] = 0;
         SR[C] = 1;
-        SR[N] = (bool)(difference & 128);
+        SR[N] = extractbit(difference, 7);
     }
 
     return;
@@ -347,49 +347,49 @@ void tm8::mos6502::CPY(const uint8_t value){
 
 void tm8::mos6502::BCC(const uint8_t value){
     if(!SR[C]){
-        PC += (int8_t)value;
+        PC += static_cast<int8_t>(value);
     }
 }
 
 void tm8::mos6502::BCS(const uint8_t value){
     if(SR[C]){
-        PC += (int8_t)value;
+        PC += static_cast<int8_t>(value);
     }
 }
 
 void tm8::mos6502::BEQ(const uint8_t value){
     if(SR[Z]){
-        PC += (int8_t)value;
+       PC += static_cast<int8_t>(value);
     }
 }
 
 void tm8::mos6502::BNE(const uint8_t value){
     if(!SR[Z]){
-        PC += (int8_t)value;
+        PC += static_cast<int8_t>(value);
     }
 }
 
 void tm8::mos6502::BMI(const uint8_t value){
     if(SR[N]){
-        PC += (int8_t)value;
+        PC += static_cast<int8_t>(value);
     }
 }
 
 void tm8::mos6502::BPL(const uint8_t value){
     if(!SR[N]){
-        PC += (int8_t)value;
+        PC += static_cast<int8_t>(value);
     }
 }
 
 void tm8::mos6502::BVC(const uint8_t value){
     if(!SR[V]){
-        PC += (int8_t)value;
+        PC += static_cast<int8_t>(value);
     }
 }
 
 void tm8::mos6502::BVS(const uint8_t value){
     if(SR[V]){
-        PC += (int8_t)value;
+        PC += static_cast<int8_t>(value);
     }
 }
 
@@ -398,11 +398,11 @@ void tm8::mos6502::JMP(const uint16_t address){
 }
 
 void tm8::mos6502::JSR(const uint16_t address){
-    uint16_t PC_old = PC - 2; //the instruction decode will automatically increase the PC by 2, as every absolute instruction uses 2 bytes, but I need the address of the instruction itself 
-    uint16_t topush = PC_old; //I will fracture the 16 bit address into 2 8 bit parts, I need to cpoy the original one not to destroy it
-    push((uint8_t)topush); //pushes low byte of the address into the stack
+    uint16_t PC_old = PC - 3; //the instruction decode will automatically increase the PC by 3, as every absolute instruction uses 3 bytes, but I need the address of the instruction itself 
+    uint16_t topush = PC; //I will fracture the 16 bit address into 2 8 bit parts, I need to cpoy the original one not to destroy it
+    push(static_cast<uint8_t>(topush)); //pushes low byte of the address into the stack
     topush >>= 8; //pushes the high byte in place of the low btye, so casting to 8 bits will return it
-    push((uint8_t)topush); //pushes the original hifh byte into the stack
+    push(static_cast<uint8_t>(topush)); //pushes the original hifh byte into the stack
 
     PC = createaddress(bus[PC_old + 1] , bus[PC_old + 2], 0); //modifies the PC to the absolute address of the subroutine
 
@@ -427,8 +427,8 @@ void tm8::mos6502::RTI(void){
 }
 
 void tm8::mos6502::BIT(const uint8_t value){
-    SR[N] = (value & 128); //0b10000000 = bit 7
-    SR[V] = (value & 64); //0b01000000 = bit 6
+    SR[N] = extractbit(value, 7); //0b10000000 = bit 7
+    SR[V] = extractbit(value, 6); //0b01000000 = bit 6
     SR[Z] = !(value & A);
 
     return;
