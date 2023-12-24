@@ -128,7 +128,7 @@ namespace tm8{
         void SBC(const uint8_t value);
 
         void AND(const uint8_t value);
-        void OR(const uint8_t value);
+        void ORA(const uint8_t value);
         void EOR(const uint8_t value);
 
         void ASL(uint8_t& value);

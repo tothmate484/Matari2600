@@ -154,11 +154,232 @@ void tm8::mos6502::decode(){ //timing not included at the moment
 }
 
 void tm8::mos6502::execute(){
+    address_bus = 0xFFFF;
+    fetch();
+    decode();
+
+    switch (inst_c)
+    {
+    case 1:
+        switch (inst_a)
+        {
+            case 0:
+                ORA(0);
+
+                std::cout << "\tORA\t";
+            break;
+
+            case 1:
+                AND(0);
+
+                std::cout << "\tAND\t";
+            break;
+
+            case 2:
+                EOR(0);
+
+                std::cout << "\tORA\t";
+            break;
+
+            case 3:
+                ADC(0);
+
+                std::cout << "\tADC\t";
+            break;
+
+            case 4:
+                STA(bus[0]);
+
+                std::cout << "\tSTA\t";
+            break;
+
+            case 5:
+                LDA(0);
+
+                std::cout << "\tLDA\t";
+            break;
+
+            case 6:
+                CMP(0);
+
+                std::cout << "\tCMP\t";
+            break;
+
+            case 7:
+                SBC(0);
+
+                std::cout << "\tORA\t";
+            break;
+        
+            default:
+            break;
+        }
+    break;
     
+    case 2:
+        switch (inst_a)
+        {
+            case 0:
+                ASL(bus[0]); //ACC
+
+                std::cout << "\tASL\t";
+            break;
+
+            case 1:
+                ROL(bus[0]); //ACC
+
+                std::cout << "\tROL\t";
+            break;
+
+            case 2:
+                LSR(bus[0]); //ACC
+
+                std::cout << "\tLSR\t";
+            break;
+
+            case 3:
+                ROR(bus[0]); //ACC
+
+                std::cout << "\tROR\t";
+            break;
+
+            case 4:
+                if(inst_b == 2){
+                    TXA();
+
+                    std::cout << "\tTXA\t";
+                }
+                else if(inst_b == 6){
+                    TXS();
+
+                    std::cout << "\tTXS\t";
+                }
+                else{
+                    STX(0);
+
+                    std::cout << "\tSTX\t";
+                }
+            break;
+
+            case 5:
+                if(inst_b == 2){
+                    TAX();
+
+                    std::cout << "\tTAX\t";
+                }
+                else if (inst_b == 6){
+                    TSX();
+
+                    std::cout << "\tTSX\t";
+                }
+                else{
+                    LDX(0);
+
+                    std::cout << "\LDX\t";
+                }
+            break;
+
+            case 6:
+                if(inst_b == 2){
+                    DEX();
+
+                    std::cout << "\tDEX\t";
+                }else{
+                    DEC(bus[0]);
+
+                    std::cout << "\tDEC\t";
+                }
+            break;
+
+            case 7:
+                if(inst_b == 2){
+                    NOP();
+
+                    std::cout << "\tNOP\t";
+                }
+                else{
+                    INC(0);
+
+                    std::cout << "\tINC\t";
+                }
+            break;
+
+            default:
+            break;
+        }
+    break;
+
+    case 0:
+        switch (inst_a)
+        {
+            case 0:
+                if(inst_b == 0){
+                    BRK();
+
+                    std::cout << "\tBRK\t";
+                }
+                else if(inst_b == 2){
+                    PHP();
+
+                    std::cout << "\tPHP\t";
+                }
+                else if(inst_b == 4){
+                    BPL(0);
+
+                    std::cout << "\tBPL\t";
+                }
+                else if(inst_b == 6){
+                    CLC();
+
+                    std::cout << "\tCLC\t";
+                }
+            break;
+                
+            case 1:
+                if(inst_b == 0){
+                    JSR(0);
+
+                    std::cout << "\tJSR\t";
+                }
+                else if(inst_b == 1){
+                    BIT(0);
+
+                    std::cout << "\tBIT\t";
+                }
+                else if(inst_b == 2){
+                    PLP();
+
+                    std::cout << "\tPLP\t";
+                }
+                else if(inst_b == 3){
+                    BIT(0);
+
+                    std::cout << "\tBIT\t";
+                }
+                else if(inst_b == 4){
+                    BMI(0);
+
+                    std::cout << "\tBMI\t";
+                }
+                else if(inst_b == 6){
+                    SEC();
+
+                    std::cout << "\tSEC\t";
+                }
+            break;
+        
+            default:
+            break;
+        }
+    break;
+
+    default:
+        break;
+    }
 }
 
 //addressing mode implementations
-//faulty, uses address instead of value
+//missing length determination
 
 void tm8::mos6502::impl(){
     address_bus = 0xFFFF;
