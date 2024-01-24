@@ -225,7 +225,7 @@ void tm8::mos6502::AND(const uint8_t value){
     return;
 }
 
-void tm8::mos6502::OR(const uint8_t value){
+void tm8::mos6502::ORA(const uint8_t value){
     A = A | value;
 
     setflags(A);

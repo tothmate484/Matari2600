@@ -275,7 +275,7 @@ void tm8::mos6502::execute(){
                 else{
                     LDX(0);
 
-                    std::cout << "\LDX\t";
+                    std::cout << "\tDX\t";
                 }
             break;
 
